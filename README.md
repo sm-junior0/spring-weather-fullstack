@@ -31,6 +31,8 @@ A full-stack weather application that allows users to track weather conditions f
   - Date range
   - Weather status
 - View historical weather data
+- Edit existing weather records
+- Delete weather records
 
 ## Tech Stack
 
@@ -138,6 +140,8 @@ weatherapp-frontend/
 - `GET /api/weather/range` - Get weather by date range
 - `GET /api/weather/status/{status}` - Get weather by status
 - `POST /api/weather` - Create new weather record
+- `PUT /api/weather/{id}` - Update weather record
+- `DELETE /api/weather/{id}` - Delete weather record
 
 ## Security
 

@@ -48,6 +48,30 @@ public class WeatherService {
         return weatherRepository.findByStatus(status);
     }
 
+    public Weather updateWeather(Long id, Weather weather) {
+        Weather existingWeather = weatherRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Weather record not found with id: " + id));
+        
+        validateWeatherData(weather);
+        
+        existingWeather.setCity(weather.getCity());
+        existingWeather.setDateRecorded(weather.getDateRecorded());
+        existingWeather.setTemperature(weather.getTemperature());
+        existingWeather.setHumidity(weather.getHumidity());
+        existingWeather.setPressure(weather.getPressure());
+        existingWeather.setWindSpeed(weather.getWindSpeed());
+        existingWeather.setStatus(weather.getStatus());
+        
+        return weatherRepository.save(existingWeather);
+    }
+
+    public void deleteWeather(Long id) {
+        if (!weatherRepository.existsById(id)) {
+            throw new IllegalArgumentException("Weather record not found with id: " + id);
+        }
+        weatherRepository.deleteById(id);
+    }
+
     private void validateWeatherData(Weather weather) {
         if (weather.getHumidity() < 0 || weather.getHumidity() > 100) {
             throw new IllegalArgumentException("Humidity must be between 0 and 100");

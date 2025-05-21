@@ -53,4 +53,23 @@ public class WeatherController {
     public ResponseEntity<List<Weather>> getWeatherByStatus(@PathVariable String status) {
         return ResponseEntity.ok(weatherService.getWeatherByStatus(status));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Weather> updateWeatherRecord(@PathVariable Long id, @RequestBody Weather weather) {
+        try {
+            return ResponseEntity.ok(weatherService.updateWeather(id, weather));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteWeatherRecord(@PathVariable Long id) {
+        try {
+            weatherService.deleteWeather(id);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 } 

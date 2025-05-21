@@ -2,6 +2,7 @@ package com.smj.weatherapp.service;
 
 import com.smj.weatherapp.model.City;
 import com.smj.weatherapp.repository.CityRepository;
+import com.smj.weatherapp.repository.WeatherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,12 @@ import java.util.Optional;
 public class CityService {
 
     private final CityRepository cityRepository;
+    private final WeatherRepository weatherRepository;
 
     @Autowired
-    public CityService(CityRepository cityRepository) {
+    public CityService(CityRepository cityRepository, WeatherRepository weatherRepository) {
         this.cityRepository = cityRepository;
+        this.weatherRepository = weatherRepository;
     }
 
     public City saveCity(City city) {
@@ -45,8 +48,13 @@ public class CityService {
 
     public void deleteCity(Long id) {
         if (!cityRepository.existsById(id)) {
-            throw new IllegalArgumentException("City not found");
+            throw new IllegalArgumentException("City not found with id: " + id);
         }
+        
+        // Delete all weather records associated with this city first
+        weatherRepository.deleteByCityId(id);
+        
+        // Then delete the city
         cityRepository.deleteById(id);
     }
 } 

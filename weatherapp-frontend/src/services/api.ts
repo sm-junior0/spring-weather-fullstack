@@ -16,4 +16,6 @@ export const weatherApi = {
         api.get<Weather[]>(`/weather/range?cityId=${cityId}&startDate=${startDate}&endDate=${endDate}`),
     getByStatus: (status: string) => api.get<Weather[]>(`/weather/status/${status}`),
     create: (weather: Omit<Weather, 'id'>) => api.post<Weather>('/weather', weather),
+    update: (id: number, weather: Omit<Weather, 'id'>) => api.put<Weather>(`/weather/${id}`, weather),
+    delete: (id: number) => api.delete(`/weather/${id}`),
 }; 

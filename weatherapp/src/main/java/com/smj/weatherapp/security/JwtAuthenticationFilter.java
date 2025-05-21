@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         try {
-            final String authHeader = request.getHeader("Authorization");
+            String authHeader = request.getHeader("Authorization");
             log.debug("Auth header: {}", authHeader);
             
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -45,12 +45,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            final String jwt = authHeader.substring(7);
-            final String username = jwtService.extractUsername(jwt);
+            String jwt = authHeader.substring(7);
+            String username = jwtService.extractUsername(jwt);
             log.debug("Extracted username: {}", username);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 log.debug("Loaded user details for: {}", username);
                 
                 if (jwtService.isTokenValid(jwt, userDetails)) {
@@ -62,16 +62,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     );
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    log.debug("Authentication successful for user: {}", username);
                 } else {
-                    log.debug("Token is invalid for user: {}", username);
-                    sendErrorResponse(response, "Invalid token", HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
+                    log.debug("Token validation failed for user: {}", username);
                 }
+            } else {
+                log.debug("Username is null or authentication already exists");
             }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             log.error("Authentication error: ", e);
-            sendErrorResponse(response, "Authentication failed: " + e.getMessage(), HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Authentication failed: " + e.getMessage());
         }
     }
 
