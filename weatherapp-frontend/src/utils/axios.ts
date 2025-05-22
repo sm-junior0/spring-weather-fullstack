@@ -31,7 +31,7 @@ instance.interceptors.request.use(
 // Add response interceptor for debugging and handling auth errors
 instance.interceptors.response.use(
     (response) => {
-        console.log('Response received:', response.status, response.config.url); // Debug log
+        console.log('Response received:', response.status, response.config.url);
         return response;
     },
     (error) => {
@@ -43,13 +43,11 @@ instance.interceptors.response.use(
             headers: error.config?.headers
         });
 
-        // Handle authentication errors
-        if (error.response?.status === 401 || error.response?.status === 403) {
-            // Clear token and redirect to login
+        // Only handle 401 (Unauthorized) errors, not 403 (Forbidden)
+        if (error.response?.status === 401) {
             localStorage.removeItem('token');
             localStorage.removeItem('username');
             
-            // Redirect to login page if not already there
             if (!window.location.pathname.includes('/login')) {
                 window.location.href = '/login';
             }

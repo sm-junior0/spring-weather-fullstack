@@ -20,19 +20,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         // Check for token on mount and refresh
         const token = localStorage.getItem('token');
-        if (token) {
+        const username = localStorage.getItem('username');
+        if (token && username) {
             setIsAuthenticated(true);
-            // Optionally fetch user data here
+            setUser({ username });
         }
     }, []);
 
     const login = async (username: string, password: string) => {
         try {
             const response = await axios.post('/auth/login', { username, password });
-            const { token, user } = response.data;
+            const { token, username: responseUsername } = response.data;
             localStorage.setItem('token', token);
+            localStorage.setItem('username', responseUsername);
             setIsAuthenticated(true);
-            setUser(user);
+            setUser({ username: responseUsername });
             navigate('/');
         } catch (error) {
             console.error('Login error:', error);
@@ -43,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const register = async (username: string, email: string, password: string) => {
         try {
             await axios.post('/auth/register', { username, email, password });
-            await login(username, password);
+            navigate('/login');
         } catch (error) {
             console.error('Registration error:', error);
             throw error;

@@ -14,7 +14,8 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 };
 
 const Navbar: React.FC = () => {
-    const { logout } = useAuth();
+    const { logout, user } = useAuth();
+    const firstLetter = user?.username ? user.username.charAt(0).toUpperCase() : '';
 
     return (
         <nav className="bg-white shadow-md">
@@ -28,7 +29,12 @@ const Navbar: React.FC = () => {
                             Cities
                         </Link>
                     </div>
-                    <div className="flex space-x-4">
+                    <div className="flex items-center space-x-4">
+                        {firstLetter && (
+                            <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold">
+                                {firstLetter}
+                            </div>
+                        )}
                         <button
                             onClick={logout}
                             className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
