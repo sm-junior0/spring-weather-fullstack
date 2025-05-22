@@ -216,13 +216,29 @@ const AppContent: React.FC = () => {
             }
           />
           <Route
-            path="/settings"
-            element={
-              <PrivateRoute>
-                <Setting />
-              </PrivateRoute>
-            }
-          />
+                path="/settings"
+                element={
+                <PrivateRoute>
+                    <Setting />
+                </PrivateRoute>
+                }
+            />
+            <Route
+                path="/help"
+                element={
+                <PrivateRoute>
+                    <Help />
+                </PrivateRoute>
+                }
+            />
+            <Route
+                path="/profile"
+                element={
+                <PrivateRoute>
+                    <Profile />
+                </PrivateRoute>
+                }
+            />
         </Routes>
       </main>
 
