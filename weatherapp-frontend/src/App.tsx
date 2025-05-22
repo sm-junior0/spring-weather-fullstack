@@ -8,12 +8,13 @@ import Login from "./components/Login"
 import Register from "./components/Register"
 import WeatherList from "./components/WeatherList"
 import CityList from "./components/CityList"
-import Settings from "./components/Settings"
+import Setting from "./components/Settings"
 import Help from "./components/Help"
 import Profile from "./components/Profile"
 import { useAuth } from "./contexts/AuthContext"
 import { CloudRain, Building2, LogOut, Menu, X, User, ChevronDown, Settings, HelpCircle, Moon, Sun } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+
 import "./App.css"
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -211,6 +212,14 @@ const AppContent: React.FC = () => {
             element={
               <PrivateRoute>
                 <CityList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <PrivateRoute>
+                <Setting />
               </PrivateRoute>
             }
           />
