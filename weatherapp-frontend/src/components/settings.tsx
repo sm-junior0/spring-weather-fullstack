@@ -166,6 +166,7 @@ export default function Setting() {
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <p className="font-medium text-gray-800 mb-2">Language</p>
                   <select
+                    title="Language"
                     value={settings.language}
                     onChange={(e) => setSettings({ ...settings, language: e.target.value })}
                     className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm rounded-md"
