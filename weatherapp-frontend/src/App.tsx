@@ -1,106 +1,91 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import React from 'react';
+import { Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
 import Login from './components/Login';
 import Register from './components/Register';
 import WeatherList from './components/WeatherList';
 import CityList from './components/CityList';
-import './App.css'
+import { useAuth } from './contexts/AuthContext';
+import './App.css';
 
-function PrivateRoute({ children }: { children: React.ReactNode }) {
+const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { isAuthenticated } = useAuth();
     return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
-}
+};
 
-function AppContent() {
-    const { isAuthenticated, logout } = useAuth();
+const Navbar: React.FC = () => {
+    const { logout } = useAuth();
 
     return (
-        <Router>
-            <div className="min-h-screen bg-gray-100">
-                <nav className="bg-white shadow-md">
-                    <div className="container mx-auto px-4">
-                        <div className="flex justify-between items-center h-16">
-                            <div className="flex space-x-4">
-                                <Link
-                                    to="/"
-                                    className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-                                >
-                                    Cities
-                                </Link>
-                                <Link
-                                    to="/weather"
-                                    className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-                                >
-                                    Weather
-                                </Link>
-                            </div>
-                            <div className="flex space-x-4">
-                                {isAuthenticated ? (
-                                    <button
-                                        onClick={logout}
-                                        className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-                                    >
-                                        Logout
-                                    </button>
-                                ) : (
-                                    <>
-                                        <Link
-                                            to="/login"
-                                            className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-                                        >
-                                            Login
-                                        </Link>
-                                        <Link
-                                            to="/register"
-                                            className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-                                        >
-                                            Register
-                                        </Link>
-                                    </>
-                                )}
-                            </div>
-                        </div>
+        <nav className="bg-white shadow-md">
+            <div className="container mx-auto px-4">
+                <div className="flex justify-between items-center h-16">
+                    <div className="flex space-x-4">
+                        <Link to="/" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                            Weather
+                        </Link>
+                        <Link to="/cities" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                            Cities
+                        </Link>
                     </div>
-                </nav>
-
-                <main>
-                    <Routes>
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route
-                            path="/"
-                            element={
-                                <PrivateRoute>
-                                    <div className="container mx-auto px-4 py-8">
-                                        <WeatherList />
-                                        <CityList />
-                                    </div>
-                                </PrivateRoute>
-                            }
-                        />
-                        <Route
-                            path="/weather"
-                            element={
-                                <PrivateRoute>
-                                    <div className="container mx-auto px-4 py-8">
-                                        <WeatherList />
-                                    </div>
-                                </PrivateRoute>
-                            }
-                        />
-                    </Routes>
-                </main>
+                    <div className="flex space-x-4">
+                        <button
+                            onClick={logout}
+                            className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                        >
+                            Logout
+                        </button>
+                    </div>
+                </div>
             </div>
-        </Router>
+        </nav>
     );
-}
+};
 
-function App() {
+const AppContent: React.FC = () => {
+    const { isAuthenticated } = useAuth();
+    const location = useLocation();
+    const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+
+    return (
+        <div className="min-h-screen bg-gray-100">
+            {isAuthenticated && !isAuthPage && <Navbar />}
+            <main className="container mx-auto px-4 py-8">
+                <Routes>
+                    <Route path="/login" element={
+                        isAuthenticated ? <Navigate to="/" /> : <Login />
+                    } />
+                    <Route path="/register" element={
+                        isAuthenticated ? <Navigate to="/" /> : <Register />
+                    } />
+                    <Route
+                        path="/"
+                        element={
+                            <PrivateRoute>
+                                <WeatherList />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/cities"
+                        element={
+                            <PrivateRoute>
+                                <CityList />
+                            </PrivateRoute>
+                        }
+                    />
+                </Routes>
+            </main>
+        </div>
+    );
+};
+
+const App: React.FC = () => {
     return (
         <AuthProvider>
             <AppContent />
         </AuthProvider>
     );
-}
+};
 
 export default App;

@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
-const api = axios.create({
+const instance = axios.create({
     baseURL: 'http://localhost:8081/api',
     headers: {
         'Content-Type': 'application/json',
@@ -9,7 +8,7 @@ const api = axios.create({
 });
 
 // Add a request interceptor to add the token to every request
-api.interceptors.request.use(
+instance.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
         console.log('Token from localStorage:', token); // Debug log
@@ -30,7 +29,7 @@ api.interceptors.request.use(
 );
 
 // Add response interceptor for debugging and handling auth errors
-api.interceptors.response.use(
+instance.interceptors.response.use(
     (response) => {
         console.log('Response received:', response.status, response.config.url); // Debug log
         return response;
@@ -46,7 +45,7 @@ api.interceptors.response.use(
 
         // Handle authentication errors
         if (error.response?.status === 401 || error.response?.status === 403) {
-            // Clear local storage
+            // Clear token and redirect to login
             localStorage.removeItem('token');
             localStorage.removeItem('username');
             
@@ -60,4 +59,4 @@ api.interceptors.response.use(
     }
 );
 
-export default api; 
+export default instance; 

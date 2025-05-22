@@ -54,7 +54,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.debug("Loaded user details for: {}", username);
                 
                 if (jwtService.isTokenValid(jwt, userDetails)) {
-                    log.debug("Token is valid for user: {}", username);
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
@@ -65,15 +64,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     log.debug("Authentication successful for user: {}", username);
                 } else {
                     log.debug("Token validation failed for user: {}", username);
+                    sendErrorResponse(response, "Token is invalid or expired", HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
                 }
-            } else {
-                log.debug("Username is null or authentication already exists");
             }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             log.error("Authentication error: ", e);
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Authentication failed: " + e.getMessage());
+            sendErrorResponse(response, "Authentication failed: " + e.getMessage(), HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 
