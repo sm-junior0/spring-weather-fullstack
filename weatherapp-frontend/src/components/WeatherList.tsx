@@ -694,6 +694,8 @@ export default function WeatherList() {
                   Add New Weather Record
                 </h3>
                 <button
+                  type="button"
+                  title="Close"
                   onClick={() => setShowAddForm(false)}
                   className="text-gray-500 hover:text-gray-700 transition-colors"
                 >
@@ -876,7 +878,7 @@ export default function WeatherList() {
                   <Edit className="h-5 w-5 mr-2 text-amber-500" />
                   Edit Weather Record
                 </h3>
-                <button onClick={handleCancelEdit} className="text-gray-500 hover:text-gray-700 transition-colors">
+                <button title="Close" onClick={handleCancelEdit} className="text-gray-500 hover:text-gray-700 transition-colors">
                   <X className="h-5 w-5" />
                 </button>
               </div>
